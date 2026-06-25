@@ -7,18 +7,18 @@ async function seed() {
   try {
     console.log('🌱 Seeding database...\n')
 
-    // Clear existing data (in order due to relations)
-    await prisma.orderItem.deleteMany()
-    await prisma.order.deleteMany()
-    await prisma.product.deleteMany()
+    // Clear data and reset IDs back to 1 so product IDs match orders.json
+    await prisma.$executeRawUnsafe(
+      'TRUNCATE "OrderItem", "Order", "Product" RESTART IDENTITY CASCADE;'
+    )
 
     // Load JSON data
     const productsData = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '../data/products.json'), 'utf8')
+      fs.readFileSync(path.join(__dirname, 'data/products.json'), 'utf8')
     )
 
     const ordersData = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '../data/orders.json'), 'utf8')
+      fs.readFileSync(path.join(__dirname, 'data/orders.json'), 'utf8')
     )
 
     // Seed products
@@ -38,7 +38,7 @@ async function seed() {
     for (const order of ordersData.orders) {
       const createdOrder = await prisma.order.create({
         data: {
-          customer: order.customer_id,
+          customer: String(order.customer_id),
           totalPrice: order.total_price,
           status: order.status,
           createdAt: new Date(order.created_at),

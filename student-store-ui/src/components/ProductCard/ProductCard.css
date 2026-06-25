@@ -13,6 +13,7 @@
 .ProductCard .media img {
   height: 250px;
   width: 248px;
+  object-fit: contain;
 }
 .ProductCard .product-info {
   flex: 1;
