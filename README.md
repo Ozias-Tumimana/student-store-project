@@ -2,15 +2,13 @@
 
 Submitted by: **Ozias Tumimana**
 
-Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
-
 ### Application Features
 
 #### CORE FEATURES
 
 - [x] **Database Creation**: Set up a Postgres database to store information about products and orders.
   - [x]  Use Prisma to define models for `products`, `orders`, and `order_items`.
-  - [ ]  **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of your `products`, `orders`, and `order_items` tables. 
+  - [X]  **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of your `products`, `orders`, and `order_items` tables. 
 - [x] **Products Model**
   - [x] Develop a products model to represent individual items available in the store. 
   - [x] This model should at minimum include the attributes:
@@ -22,7 +20,7 @@ Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
     - [x] `category`
   - [x] Implement methods for CRUD operations on products.
   - [x] Ensure transaction handling such that when an product is deleted, any `order_items` that reference that product are also deleted. 
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Products Model.
+  - [X] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Products Model.
 - [x] **Orders Model**
   - [x] Develop a model to manage orders. 
   - [x] This model should at minimum include the attributes:
@@ -33,7 +31,7 @@ Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
     - [x] `created_at` _(implemented as `createdAt`)_
   - [x] Implement methods for CRUD operations on orders.
   - [x] Ensure transaction handling such that when an order is deleted, any `order_items` that reference that order are also deleted. 
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Order Model.
+  - [X] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Order Model.
 
 - [x] **Order Items Model**
   - [x] Develop a model to represent the items within an order. 
@@ -44,7 +42,7 @@ Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
     - [x] `quantity`
     - [x] `price`
   - [x] Implement methods for fetching and creating order items.  
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Order Items Model.
+  - [X] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Prisma Studio to demonstrate the creation of all attributes (table columns) in your Order Items Model.
 - [x] **API Endpoints**
   - [x] Application supports the following **Product Endpoints**:
     - [x] `GET /products`: Fetch a list of all products.
@@ -58,11 +56,11 @@ Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
     - [x] `POST /orders`: Create a new order with specified order items.
     - [x] `PUT /orders/:order_id`: Update the details of an existing order (e.g., change status).
     - [x] `DELETE /orders/:order_id`: Remove an order from the database.
-    - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Postman or another API testing tool to demonstrate the successful implementation of each endpoint. For the `DELETE` endpoints, please use Prisma Studio to demonstrate that any relevant order items have been deleted. 
+    - [X] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use Postman or another API testing tool to demonstrate the successful implementation of each endpoint. For the `DELETE` endpoints, please use Prisma Studio to demonstrate that any relevant order items have been deleted. 
 - [x] **Frontend Integration**
   - [x] Connect the backend API to the provided frontend interface, ensuring dynamic interaction for product browsing, cart management, and order placement. Adjust the frontend as necessary to work with your API.
   - [x] Ensure the home page displays products contained in the product table.
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use `npm start` to run your server and display your website in your browser. 
+  - [X] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: Use `npm start` to run your server and display your website in your browser. 
     - [x] Demonstrate that users can successfully add items to their shopping cart, delete items from their shopping cart, and place an order
     - [x] After placing an order use Postman or Prisma Studio demonstrate that a corresponding order has been created in your orders table.
 
@@ -98,28 +96,37 @@ Deployed Application (optional): [Student Store Deployed Site](ADD_LINK_HERE)
 
 ### Walkthrough Video
 
-`TODO://` Add the embedded URL code to your animated app walkthrough below, `ADD_EMBEDDED_CODE_HERE`. Make sure the video or gif actually renders and animates when viewing this README. (🚫 Remove this paragraph after adding walkthrough video)
-
-`ADD_EMBEDDED_CODE_HERE`
+`https://www.loom.com/share/e058784ed8a748799c315c05fa67cc33`
 
 ### Reflection
 
 * Did the topics discussed in your labs prepare you to complete the assignment? Be specific, which features in your weekly assignment did you feel unprepared to complete?
 
-Add your response here
+For the most part yes. The labs covered the basics of Prisma models and CRUD routes pretty well, so the products and orders endpoints felt familiar by the time I got to them. The part I felt least prepared for was the POST /orders transaction. Creating the order, creating all the order items, and calculating the total all at once (and rolling it back if one product ID is bad) was a new concept for me. I had to spend extra time reading the Prisma docs on $transaction to actually understand what was happening instead of just copying it.
 
 * If you had more time, what would you have done differently? Would you have added additional features? Changed the way your project responded to a particular event, etc.
-  
-Add your response here
+
+I'd build out the Past Orders page on the frontend. I already added the ?customer= filter on the backend GET /orders route with the stretch in mind, so the API side is basically ready, I just ran out of time to build the UI page and the email filter on top of it. I'd also like to deploy it on Render so there's a live link instead of only running it locally.
 
 * Reflect on your project demo, what went well? Were there things that maybe didn't go as planned? Did you notice something that your peer did that you would like to try next time?
 
-Add your response here
+The cascade delete demo in Prisma Studio went really well, it's satisfying to delete a product and watch the order items disappear on their own. The thing that didn't go as planned was a frustrating little bug where one of my Postman requests kept returning a 404, and it turned out there was a trailing space in the URL that was getting encoded as %20. Took me way too long to spot. Next time I want to set up a saved Postman collection from the start instead of making the requests one at a time as I go.
 
 ### Open-source libraries used
 
-- Add any links to open-source libraries used in your project.
+Backend:
+- [Express](https://expressjs.com/) - web server and routing
+- [Prisma](https://www.prisma.io/) - ORM and migrations
+- [pg](https://node-postgres.com/) - PostgreSQL driver
+- [cors](https://github.com/expressjs/cors) - enabling cross-origin requests from the frontend
+- [dotenv](https://github.com/motdotla/dotenv) - loading the database URL from .env
+
+Frontend:
+- [React](https://react.dev/) + [React Router](https://reactrouter.com/) - UI and routing
+- [Axios](https://axios-http.com/) - making requests to the API
+- [Moment](https://momentjs.com/) - formatting dates
+- [Vite](https://vitejs.dev/) - dev server and build tool
 
 ### Shout out
 
-Give a shout out to somebody from your cohort that especially helped you during your project. This can be a fellow peer, instructor, TA, mentor, etc.
+Big thanks to Michael for helping me out when I was connecting the frontend to my backend. I was stuck getting the two to talk to each other and his help got me past it.
