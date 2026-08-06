@@ -1,0 +1,52 @@
+# ── Render Blueprint for Student Store ──
+# Three resources: a free Postgres DB, the Express API (Web Service), and the
+# React/Vite storefront (Static Site). Deploy via Render → "New +" →
+# "Blueprint" → point at this repo. Render reads this file.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# DATABASE_URL is wired automatically from the DB below. After the first deploy,
+# set one thing in the dashboard:
+#   • VITE_API_URL (storefront) — the API service URL
+# (Render can't inject a Web Service URL into a Static Site's build, so it's manual.)
+#
+# NOTE: free Render Postgres databases expire ~30 days after creation. When that
+# happens, recreate the DB and redeploy the API (build re-runs migrations + seed).
+
+databases:
+  - name: student-store-db
+    plan: free
+
+services:
+  # ── Express API ──
+  - type: web
+    name: student-store-api
+    runtime: node
+    plan: free
+    rootDir: student-store-api
+    # Install, generate the Prisma client, apply migrations, then seed products.
+    # (Seed TRUNCATEs and reloads on every deploy — fine for a demo store, but it
+    #  resets any orders placed through the live site. Drop `&& npm run seed`
+    #  after the first deploy if you want orders to persist.)
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run seed
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: student-store-db
+          property: connectionString
+
+  # ── React storefront (static) ──
+  - type: web
+    name: student-store-ui
+    runtime: static
+    rootDir: student-store-ui
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    # SPA fallback so react-router deep links / reloads work.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false          # set to the student-store-api URL after first deploy
