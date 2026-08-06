@@ -1,20 +1,16 @@
 # ── Render Blueprint for Student Store ──
-# Three resources: a free Postgres DB, the Express API (Web Service), and the
-# React/Vite storefront (Static Site). Deploy via Render → "New +" →
-# "Blueprint" → point at this repo. Render reads this file.
+# Two services: the Express API (Web Service) and the React/Vite storefront
+# (Static Site). Deploy via Render → "New +" → "Blueprint" → point at this repo.
 # Docs: https://render.com/docs/blueprint-spec
 #
-# DATABASE_URL is wired automatically from the DB below. After the first deploy,
-# set one thing in the dashboard:
-#   • VITE_API_URL (storefront) — the API service URL
-# (Render can't inject a Web Service URL into a Static Site's build, so it's manual.)
+# The database is EXTERNAL (Neon) — not provisioned here — so it never expires
+# (unlike Render's free Postgres, which is deleted ~30 days after creation).
+# This mirrors how the Orbis capstone is set up. See DEPLOY.md for the Neon steps.
 #
-# NOTE: free Render Postgres databases expire ~30 days after creation. When that
-# happens, recreate the DB and redeploy the API (build re-runs migrations + seed).
-
-databases:
-  - name: student-store-db
-    plan: free
+# After the first deploy, fill these in the dashboard:
+#   • DATABASE_URL  (backend)   — the Neon connection string (see DEPLOY.md)
+#   • VITE_API_URL  (storefront) — the API service URL, then redeploy the UI
+# (Render can't inject a Web Service URL into a Static Site's build, so it's manual.)
 
 services:
   # ── Express API ──
@@ -31,9 +27,7 @@ services:
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: student-store-db
-          property: connectionString
+        sync: false          # paste the Neon connection string in the dashboard
 
   # ── React storefront (static) ──
   - type: web

@@ -2,7 +2,7 @@
 
 You deploy **three resources**, in this order (each needs the previous one's URL):
 
-1. **PostgreSQL database** (Render Postgres)
+1. **PostgreSQL database** (Neon — free, never expires)
 2. **Backend** — Express API (Web Service)
 3. **Frontend** — React storefront (Static Site)
 
@@ -13,25 +13,29 @@ You deploy **three resources**, in this order (each needs the previous one's URL
 
 **Two ways to do this:**
 
-- **Fastest — Blueprint:** the included `render.yaml` provisions all three at once.
-  Render dashboard → **New + → Blueprint** → pick the `Ozias-Tumimana/student-store-project`
-  repo. Render creates the DB + both services and auto-wires `DATABASE_URL`. Then
-  jump to **step 3** below to set `VITE_API_URL`.
+- **Fastest — Blueprint:** create the Neon database first (step 1), then Render
+  dashboard → **New + → Blueprint** → pick the `Ozias-Tumimana/student-store-project`
+  repo. The included `render.yaml` creates both the API and the storefront; Render
+  prompts you for `DATABASE_URL` (paste the Neon string). After the first deploy,
+  set `VITE_API_URL` on the storefront (step 3) and redeploy it.
 - **Manual:** follow steps 1–3 below. Prereq: push to GitHub and connect the repo
   (dashboard.render.com → New → connect `Ozias-Tumimana/student-store-project`).
 
 ---
 
-## 1. PostgreSQL database
+## 1. PostgreSQL database (Neon — free, never expires)
 
-- Render dashboard → **New → Postgres**.
-- Name: `student-store-db`. Region: pick one (remember it — use the same for the backend).
-- Plan: **Free**. Click **Create Database**.
-- When it's ready, open it and copy the **Internal Database URL**
-  (starts with `postgresql://…`). You'll paste this into the backend next.
+Use **Neon** instead of Render's own Postgres. Render's free Postgres is deleted
+~30 days after creation; Neon's free tier is permanent (it just auto-sleeps when
+idle and wakes on the next query). This is the same setup the Orbis capstone uses.
 
-> Note: free Render Postgres databases expire ~30 days after creation. When that
-> happens, recreate it and redeploy the backend (the build re-runs migrations + seed).
+- Go to **neon.tech** → sign up (free) → **Create Project**.
+- Name it `student-store` (region: pick one close to your Render region).
+- After it's created, open **Connection Details** and copy the connection string
+  (starts with `postgresql://…`, ends with `?sslmode=require`). This is your
+  `DATABASE_URL` — you'll paste it into the backend next.
+
+> Keep the pooled connection string Neon shows by default; it works fine with Prisma.
 
 ---
 
@@ -54,7 +58,7 @@ You deploy **three resources**, in this order (each needs the previous one's URL
 - **Environment variables** (Advanced → Add Environment Variable):
   | Key | Value |
   |---|---|
-  | `DATABASE_URL` | the **Internal Database URL** from step 1 |
+  | `DATABASE_URL` | the **Neon connection string** from step 1 |
 - Click **Create Web Service**. Wait for the deploy to finish, then copy the
   service URL — something like `https://student-store-api.onrender.com`.
 - Verify: open `<that URL>/products` in a browser → you should see the seeded
